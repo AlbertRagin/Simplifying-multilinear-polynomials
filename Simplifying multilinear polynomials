@@ -1,0 +1,44 @@
+function simplify(poly){
+  let obj = {},ordered = {},expr = ''
+  for(let i=0;i<poly.length;i++){
+    let coeff='',canIterate = true,index = i,variable='',sign='+';
+    while(canIterate){
+      let val = poly[index]
+      if(val ==="+" || val === '-') sign = val
+      else if(!isNaN(parseInt(val))) coeff+=parseInt(val);
+      else variable+=val;
+      index++
+      canIterate = poly[index] !== '-' && poly[index] !== '+' && index<poly.length ? true : false
+    }
+    // console.log(`${sign} ${coeff} ${variable}`)
+    variable = variable.split('').sort().join('')
+    if(coeff=='') coeff = 1
+    coeff = parseInt(sign+coeff)
+    if(!obj[variable]) obj[variable] = []
+    obj[variable].push(coeff)
+    i = index-1
+  }
+
+  let sorted = Object.keys(obj).sort((a,b)=>{
+    return a<b ? -1 : 1
+  })
+  sorted = sorted.sort((a,b)=>{
+    return a.length - b.length
+  })
+  sorted.forEach(key=>{
+    ordered[key] = obj[key]
+  })
+  // console.log(sorted)
+  Object.entries(ordered).forEach((entry,index)=>{
+    let coeff = entry[1].reduce((a,b)=>a+b)
+    if(!(coeff === 0)){
+      if(coeff===-1) expr+= '-'+entry[0]
+      else if(coeff<-1) expr+=coeff+entry[0]
+      else if(coeff === 1 && index === 0) expr+=entry[0]
+      else if(coeff===1 && index > 0) expr+='+'+entry[0]
+      else if(coeff > 1 && index > 0) expr+='+'+coeff+entry[0]
+      else expr+=coeff+entry[0]
+    }
+  })
+  return expr
+}
